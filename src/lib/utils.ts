@@ -55,3 +55,74 @@ export const multiFormatDateString = (timestamp: string = ""): string => {
 export const checkIsLiked = (likeList: string[], userId: string) => {
   return likeList.includes(userId);
 };
+
+
+export const convertListStringsToLowerCase = (inputArray: (string | undefined)[]): string[] => {
+  const processedStrings: string[] = [];
+
+  for (const str of inputArray) {
+    if (typeof str === 'string') {
+      const lowercasedString = str.toLowerCase();
+      processedStrings.push(lowercasedString);
+    }
+  }
+
+  return processedStrings;
+};
+
+export const removeVietnameseAccents = (inputArray: (string | undefined)[]): string[] => {
+  const processedArray: string[] = [];
+
+  for (const str of inputArray) {
+    if (str !== undefined) {
+      const processedString = str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+      processedArray.push(processedString);
+    }
+  }
+
+  return processedArray;
+};
+
+export const removeWhitespace = (strings: (string | undefined)[]): string[] => {
+  const processedStrings: string[] = [];
+
+  for (const str of strings) {
+    if (typeof str === 'string') {
+      const trimmedStr = str.trim(); // Loại bỏ khoảng trắng ở đầu và cuối chuỗi
+      const filteredStr = trimmedStr.replace(/\s+/g, ''); // Loại bỏ tất cả các khoảng trắng trong chuỗi
+      const lowercasedStr = filteredStr.toLowerCase(); // Chuyển đổi thành chữ thường
+
+      processedStrings.push(lowercasedStr);
+    }
+  }
+
+  return processedStrings;
+};
+
+export const removeAccentsAndWhitespace = (inputArray: (string | undefined)[]): string[] => {
+  const processedStrings: string[] = [];
+
+  for (const str of inputArray) {
+    if (typeof str === 'string') {
+      // Loại bỏ dấu tiếng Việt và chuyển thành chữ thường
+      const noAccentsString = str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+
+      // Loại bỏ tất cả khoảng trắng
+      const noWhitespaceString = noAccentsString.replace(/\s+/g, '');
+
+      processedStrings.push(noWhitespaceString);
+    }
+  }
+
+  return processedStrings;
+};
+
+export const convertToLowerCase = (input: string): string => {
+  return input.toLowerCase();
+};

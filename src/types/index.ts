@@ -31,9 +31,11 @@ export type INewPost = {
     file: File[];
     location?: string;
     tags?: string;
+    search: string;
 };
 
 export type IUpdatePost = {
+
     postId: string;
     caption: string;
     imageId: string;
@@ -41,6 +43,7 @@ export type IUpdatePost = {
     file: File[];
     location?: string;
     tags?: string;
+    search: string;
 };
 
 export type IUser = {
