@@ -1,9 +1,9 @@
-import Loader from "@/components/shared/Loader";
+
 import UserCard from "@/components/shared/UserCard";
+import { AllUsersSkeleton } from "@/components/skeletons";
 import { useToast } from "@/components/ui/use-toast";
 import { useGetUsers } from "@/lib/react-query/queriesAndMutations";
-// import { Loader, UserCard } from "@/components/shared";
-// import { useGetUsers } from "@/lib/react-query/queries";
+
 
 const AllUsers = () => {
     const { toast } = useToast();
@@ -21,7 +21,7 @@ const AllUsers = () => {
             <div className="user-container">
                 <h2 className="h3-bold md:h2-bold text-left w-full">All Users</h2>
                 {isLoading && !creators ? (
-                    <Loader />
+                    <AllUsersSkeleton />
                 ) : (
                     <ul className="user-grid">
                         {creators?.documents.map((creator) => (

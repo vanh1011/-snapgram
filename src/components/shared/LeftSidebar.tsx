@@ -21,7 +21,7 @@ const LeftSidebar = () => {
             <div className='flex flex-col gap-11'>
                 <Link to="/" className='flex gap-3 items-center'>
                     <img
-                        src="/assets/images/logo.svg"
+                        src="/assets/images/logo_test.svg"
                         alt='logo'
                         width={130}
                         height={325}
@@ -42,7 +42,7 @@ const LeftSidebar = () => {
                         </p>
                     </div>
                 </Link>
-                <ul className='flex flex-col gap-6'>
+                <ul className='flex flex-col gap-6 max-h-96 overflow-y-auto custom-scrollbar pr-2'>
                     {sidebarLinks.map((link: INavLink) => {
                         const isActive = pathname === link.route;
                         return (

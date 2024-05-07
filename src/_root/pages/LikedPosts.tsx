@@ -1,6 +1,6 @@
 
 import GridPostList from "@/components/shared/GridPostList";
-import Loader from "@/components/shared/Loader";
+import { GridPostsSkeleton } from "@/components/skeletons";
 import { useGetCurrentUser } from "@/lib/react-query/queriesAndMutations";
 
 const LikedPosts = () => {
@@ -9,7 +9,7 @@ const LikedPosts = () => {
     if (!currentUser)
         return (
             <div className="flex-center w-full h-full">
-                <Loader />
+                <GridPostsSkeleton />
             </div>
         );
 

@@ -9,11 +9,12 @@ import {
 } from "react-router-dom";
 import { LikedPosts } from "@/_root/pages";
 import { useUserContext } from "@/context/AuthContext";
-
 import { Button } from "@/components/ui/button";
 import GridPostList from "@/components/shared/GridPostList";
-import Loader from "@/components/shared/Loader";
 import { useGetUserById } from "@/lib/react-query/queriesAndMutations";
+import { ProfileDetailSkeleton } from "@/components/skeletons";
+
+
 
 interface StabBlockProps {
     value: string | number;
@@ -37,7 +38,9 @@ const Profile = () => {
     if (!currentUser)
         return (
             <div className="flex-center w-full h-full">
-                <Loader />
+                <ProfileDetailSkeleton />
+
+
             </div>
         );
 

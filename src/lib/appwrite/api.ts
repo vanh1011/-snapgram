@@ -77,23 +77,99 @@ export async function signOutAccount() {
     }
 }
 
+// export async function createPost(post: INewPost) {
+//     try {
+//         //upload image to storage
+//         const uploadedFile = await uploadFile(post.file[0]);
+//         if (!uploadedFile) throw Error;
+
+//         //get file url
+//         const fileurl = getFilePreview(uploadedFile.$id);
+
+//         if (!fileurl) {
+//             deleteFile(uploadedFile.$id)
+//             throw Error;
+
+//         }
+//         //convert tag in an array
+//         const tags = post.tags?.replace(/ /g, '').split(',') || [];
+
+//         //* for search purpose
+//         //convert all uppercase to lowercase
+//         const convertedStrings = convertListStringsToLowerCase([
+
+//             post.caption,
+//             post.location, post.tags
+//         ]);
+//         //remove all vietnamese accents
+//         const removedAccents = removeVietnameseAccents([
+
+//             post.caption,
+//             post.location, post.tags
+//         ]);
+//         //remove all whitespace characters
+//         const removedWhitespace = removeWhitespace([
+
+//             post.caption,
+//             post.location, post.tags
+//         ]);
+//         //remove all accents and whitespace
+//         const removedAccentsAndWhitespace = removeAccentsAndWhitespace([
+
+//             post.caption,
+//             post.location, post.tags
+//         ]);
+//         const searchString = convertedStrings.concat(
+//             " ",
+//             removedAccents,
+//             tags.join("")
+//         );
+
+
+//         //Save to database
+
+//         const newPost = await databases.createDocument(
+//             appwriteConfig.databaseId,
+//             appwriteConfig.postCollectionId,
+//             ID.unique(),
+//             {
+//                 creator: post.userId,
+//                 caption: post.caption,
+//                 imageUrl: fileurl,
+//                 imageId: uploadedFile.$id,
+//                 location: post.location,
+//                 tags: tags,
+//                 search: searchString,
+//             }
+//         )
+//         if (!newPost) {
+//             await deleteFile(uploadedFile.$id)
+//             throw Error;
+//         }
+
+//         return newPost;
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
+
 export async function createPost(post: INewPost) {
     try {
-        //upload image to storage
+        //Upload image to storage
         const uploadedFile = await uploadFile(post.file[0]);
+
         if (!uploadedFile) throw Error;
 
         //get file url
-        const fileurl = getFilePreview(uploadedFile.$id);
+        const fileUrl = getFilePreview(uploadedFile.$id);
 
-        if (!fileurl) {
-            deleteFile(uploadedFile.$id)
+        if (!fileUrl) {
+            await deleteFile(uploadedFile.$id);
             throw Error;
-
         }
-        //convert tag in an array
-        const tags = post.tags?.replace(/ /g, '').split(',') || [];
 
+        //convert tags in an array
+        const tags = post.tags?.replace(/ /g, "").split(",") || [];
         //* for search purpose
         //convert all uppercase to lowercase
         const convertedStrings = convertListStringsToLowerCase([
@@ -107,21 +183,14 @@ export async function createPost(post: INewPost) {
             post.caption,
             post.location,
         ]);
-        //remove all whitespace characters
-        const removedWhitespace = removeWhitespace([
+        console.log(convertedStrings)
+        const searchString = convertedStrings.concat(
+            " ",
+            removedAccents,
+            tags.join("")
+        );
 
-            post.caption,
-            post.location,
-        ]);
-        //remove all accents and whitespace
-        const removedAccentsAndWhitespace = removeAccentsAndWhitespace([
-
-            post.caption,
-            post.location,
-        ]);
-
-        //Save to database
-
+        //save post to database
         const newPost = await databases.createDocument(
             appwriteConfig.databaseId,
             appwriteConfig.postCollectionId,
@@ -129,28 +198,20 @@ export async function createPost(post: INewPost) {
             {
                 creator: post.userId,
                 caption: post.caption,
-                imageUrl: fileurl,
+                imageUrl: fileUrl,
                 imageId: uploadedFile.$id,
                 location: post.location,
                 tags: tags,
-                search: [
-                    ...convertedStrings,
-                    ...tags,
-                    ...removedAccents,
-                    ...removedWhitespace,
-                    ...removedAccentsAndWhitespace,
-                ],
-
+                search: searchString,
             }
-        )
+        );
         if (!newPost) {
-            await deleteFile(uploadedFile.$id)
+            await deleteFile(uploadedFile.$id);
             throw Error;
         }
-
         return newPost;
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 }
 
@@ -276,91 +337,156 @@ export async function getPostById(postId: string) {
 
 }
 
+// export async function updatePost(post: IUpdatePost) {
+//     const hasFileToUpdate = post.file.length > 0;
+//     try {
+
+//         let image = {
+//             imageUrl: post.imageUrl,
+//             imageId: post.imageId,
+//         }
+
+//         if (hasFileToUpdate) {
+
+//             //upload image to storage
+//             const uploadedFile = await uploadFile(post.file[0]);
+//             if (!uploadedFile) throw Error;
+
+//             //get file url
+//             const fileurl = getFilePreview(uploadedFile.$id);
+
+//             if (!fileurl) {
+//                 deleteFile(uploadedFile.$id)
+//                 throw Error;
+//             }
+//             image = { ...image, imageUrl: fileurl, imageId: uploadedFile.$id }
+//         }
+
+//         //convert tag in an array
+//         const tags = post.tags?.replace(/ /g, '').split(',') || [];
+
+//         //* for search purpose
+//         //convert all uppercase to lowercase
+//         const convertedStrings = convertListStringsToLowerCase([
+
+//             post.caption,
+//             post.location, post.tags
+//         ]);
+//         //remove all vietnamese accents
+//         const removedAccents = removeVietnameseAccents([
+
+//             post.caption,
+//             post.location,
+//             post.tags
+//         ]);
+//         //remove all whitespace characters
+//         const removedWhitespace = removeWhitespace([
+
+//             post.caption,
+//             post.location,
+//             post.tags
+//         ]);
+//         //remove all accents and whitespace
+//         const removedAccentsAndWhitespace = removeAccentsAndWhitespace([
+
+//             post.caption,
+//             post.location, post.tags
+//         ]);
+//         const searchString = convertedStrings.concat(
+//             " ",
+//             removedAccents,
+//             tags.join("")
+//         );
+//         //Save to database
+
+//         const updatePost = await databases.updateDocument(
+//             appwriteConfig.databaseId,
+//             appwriteConfig.postCollectionId,
+//             post.postId,
+//             {
+
+//                 caption: post.caption,
+//                 imageUrl: image.imageUrl,
+//                 imageId: image.imageId,
+//                 location: post.location,
+//                 tags: tags,
+//                 search: searchString,
+
+//             }
+//         )
+//         if (!updatePost) {
+//             await deleteFile(post.imageId)
+//             throw Error;
+//         }
+
+//         return updatePost;
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
+
 export async function updatePost(post: IUpdatePost) {
     const hasFileToUpdate = post.file.length > 0;
     try {
-
         let image = {
             imageUrl: post.imageUrl,
             imageId: post.imageId,
-        }
+        };
 
         if (hasFileToUpdate) {
-
-            //upload image to storage
+            //Upload image to storage
             const uploadedFile = await uploadFile(post.file[0]);
             if (!uploadedFile) throw Error;
-
             //get file url
-            const fileurl = getFilePreview(uploadedFile.$id);
+            const fileUrl = getFilePreview(uploadedFile.$id);
 
-            if (!fileurl) {
-                deleteFile(uploadedFile.$id)
+            if (!fileUrl) {
+                await deleteFile(uploadedFile.$id);
                 throw Error;
             }
-            image = { ...image, imageUrl: fileurl, imageId: uploadedFile.$id }
+            image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id };
         }
 
-        //convert tag in an array
-        const tags = post.tags?.replace(/ /g, '').split(',') || [];
-
+        //convert tags in an array
+        const tags = post.tags?.replace(/ /g, "").split(",") || [];
         //* for search purpose
         //convert all uppercase to lowercase
         const convertedStrings = convertListStringsToLowerCase([
-
             post.caption,
             post.location,
         ]);
         //remove all vietnamese accents
         const removedAccents = removeVietnameseAccents([
-
             post.caption,
             post.location,
         ]);
-        //remove all whitespace characters
-        const removedWhitespace = removeWhitespace([
-
-            post.caption,
-            post.location,
-        ]);
-        //remove all accents and whitespace
-        const removedAccentsAndWhitespace = removeAccentsAndWhitespace([
-
-            post.caption,
-            post.location,
-        ]);
-
-        //Save to database
-
-        const updatePost = await databases.updateDocument(
+        const searchString = convertedStrings.concat(
+            " ",
+            removedAccents,
+            tags.join("")
+        );
+        //save post to database
+        const updatedPost = await databases.updateDocument(
             appwriteConfig.databaseId,
             appwriteConfig.postCollectionId,
             post.postId,
             {
-
                 caption: post.caption,
                 imageUrl: image.imageUrl,
                 imageId: image.imageId,
                 location: post.location,
                 tags: tags,
-                search: [
-                    ...convertedStrings,
-                    ...tags,
-                    ...removedAccents,
-                    ...removedWhitespace,
-                    ...removedAccentsAndWhitespace,
-                ],
-
+                search: searchString,
             }
-        )
-        if (!updatePost) {
-            await deleteFile(post.imageId)
+        );
+
+        if (!updatedPost) {
+            await deleteFile(post.imageId);
             throw Error;
         }
-
-        return updatePost;
+        return updatedPost;
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 }
 
@@ -406,14 +532,11 @@ export async function searchPosts(searchTerm: string) {
         const posts = await databases.listDocuments(
             appwriteConfig.databaseId,
             appwriteConfig.postCollectionId,
+            [Query.search('search', convertedSearchTerm)]
+        );
+        console.log(convertedSearchTerm)
 
-            [
-                Query.search('search', convertedSearchTerm),
-            ],
-        )
-        console.log(posts)
         if (!posts) throw Error;
-        console.log(posts)
         return posts;
     } catch (error) {
         console.log(error)

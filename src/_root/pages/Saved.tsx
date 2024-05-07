@@ -1,5 +1,5 @@
 import GridPostList from "@/components/shared/GridPostList";
-import Loader from "@/components/shared/Loader";
+import { SavedSkeleton } from "@/components/skeletons";
 import { useGetCurrentUser } from "@/lib/react-query/queriesAndMutations";
 import { Models } from "appwrite";
 
@@ -40,7 +40,7 @@ const Saved = () => {
                 </ul>
 
             ) : (
-                <Loader />
+                <SavedSkeleton />
             )}
         </div>
     );

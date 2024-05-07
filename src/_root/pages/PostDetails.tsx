@@ -1,6 +1,7 @@
 import GridPostList from "@/components/shared/GridPostList";
 import Loader from "@/components/shared/Loader";
 import PostStats from "@/components/shared/PostStats";
+import { PostDetailsSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/context/AuthContext";
 import { useDeletePost, useGetPostById, useGetUserPosts } from "@/lib/react-query/queriesAndMutations"
@@ -43,7 +44,7 @@ const PostDetails = () => {
                     <p className="small-medium lg:base-medium">Back</p>
                 </Button>
             </div>
-            {isPending ? <Loader /> :
+            {isPending ? <PostDetailsSkeleton /> :
                 (<div className="post_details-card">
                     <img
                         src={post?.imageUrl}

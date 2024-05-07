@@ -4,10 +4,11 @@ import { Route, Routes } from 'react-router-dom';
 import './globals.css';
 import SigninForm from './_auth/forms/SigninForm';
 import SignupForm from './_auth/forms/SignupForm';
-import { AllUsers, CreatePost, EditPost, Explore, Home, PostDetails, Profile, Saved, UpdateProfile } from './_root/pages/';
+import { AllUsers, CreatePost, EditPost, Explore, Home, PostDetails, Profile, Saved, UpdateProfile, ChatBot, NotFound } from './_root/pages/';
 import AuthLayout from './_auth/AuthLayout';
 import RootLayout from './_root/RootLayout';
 import { Toaster } from "@/components/ui/toaster"
+
 
 const App = () => {
 
@@ -31,6 +32,11 @@ const App = () => {
                     <Route path="/posts/:id/*" element={<PostDetails />} />
                     <Route path="/profile/:id/*" element={<Profile />} />
                     <Route path="/update-profile/:id" element={<UpdateProfile />} />
+                    <Route path="/chatbot" element={<ChatBot />} />
+                    {/* error 404 */}
+                    <Route path="*" element={<NotFound />} />
+
+
                 </Route>
             </Routes>
             <Toaster />

@@ -8,4 +8,5 @@ export { default as EditPost } from './EditPost';
 export { default as PostDetails } from './PostDetails';
 export { default as AllUsers } from './AllUsers';
 export { default as LikedPosts } from './LikedPosts';
-
+export { default as ChatBot } from "./ChatBot";
+export { default as NotFound } from "./NotFound";
