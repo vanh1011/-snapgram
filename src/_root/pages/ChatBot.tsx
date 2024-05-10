@@ -34,7 +34,7 @@ const ChatBot = () => {
     const [loading, setLoading] = useState(false);
     const [inputDisabled, setInputDisabled] = useState(false);
     const [dots, setDots] = useState("");
-
+    const [check, setCheck] = useState(false);
     useEffect(() => {
         let intervalId: NodeJS.Timeout;
 
@@ -116,7 +116,7 @@ const ChatBot = () => {
         // Xóa nội dung tin nhắn sau khi gửi
         setMessage("");
         setInputDisabled(true);
-
+        setCheck(true);
         // Gửi tin nhắn từ người dùng và lấy tin nhắn từ bot
         if (message.trim() !== "") {
             // Thêm tin nhắn từ người dùng vào danh sách hiển thị
@@ -152,63 +152,83 @@ const ChatBot = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen justify-between p-4">
-            <div className="flex-1 p-4 overflow-y-auto custom-scrollbar mb-14">
-                {messages.map((msg) => (
-                    <div
-                        key={msg.id}
-                        className={`text-justify mb-2 ${msg.user_id === "user" ? "bg-gray-800" : "bg-gray-600"
-                            } p-2 rounded-md`}>
-
-                        <strong>{msg.name}: </strong>
-                        <span
-                            className="leading-loose"
-                            dangerouslySetInnerHTML={{ __html: msg.message }}
+        <div className="flex flex-1 bg-slate-800 ">
+            {!check ? (
+                <div className="flex h-full flex-1 items-center justify-center  mb-60 ">
+                    <div className=" flex flex-col items-center mb-64">
+                        <img
+                            src="/assets/images/logo_test.svg"
+                            alt="logo"
+                            width={190}
+                            height={395}
                         />
-                        {msg.user_id !== "user" && ( // Sử dụng điều kiện để kiểm tra nếu user_id không phải là "user"
-                            <div className="pt-4 flex flex-row items-center gap-3">
-                                <span>Learn more:</span>
-                                <div className="flex flex-row max-w-prose overflow-x-auto custom-scrollbar gap-3 pb-2">
-                                    {msg.sources?.map((source) => (
-                                        <TooltipProvider key={source.url}>
-                                            {" "}
-                                            {/* Đảm bảo sử dụng key duy nhất cho mỗi phần tử trong mảng */}
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Button variant="outline">
-                                                        {handleSourceUrl(source.url)}
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <a
-                                                        className="text-violet-600 underline"
-                                                        href={source.url}
-                                                        target="_blank" // Mở liên kết trong tab mới
-                                                        rel="noopener noreferrer" // Bảo mật liên kết ngoài
-                                                    >
-                                                        {source.url}
-                                                    </a>
-                                                    <div>
-                                                        <p className="text-green-600 no-underline overflow-hidden text-ellipsis whitespace-nowrap">
-                                                            {source.title}
-                                                        </p>
-                                                    </div>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </TooltipProvider>
-                                    ))}
+                        <h2 className="my-10 text-2xl font-medium">How can I help you today?</h2>
+                        {/* <p className="text-light-3 small-medium md:base-regular mt-2">ask me some any things</p> */}
+
+                    </div>
+                </div>
+            ) : (
+                <div className="flex-1 px-80 w p-4 overflow-y-auto custom-scrollbar mb-14">
+                    {messages.map((msg) => (
+                        <div
+                            key={msg.id}
+                            className={`text-justify mb-2 ${msg.user_id === "user" ? "bg-gray-800" : "bg-gray-600"
+                                } p-2 rounded-md`}>
+
+                            <strong>{msg.name}: </strong>
+                            <span
+                                className="leading-loose"
+                                dangerouslySetInnerHTML={{ __html: msg.message }}
+                            />
+                            {msg.user_id !== "user" && ( // Sử dụng điều kiện để kiểm tra nếu user_id không phải là "user"
+                                <div className="pt-4 flex flex-row items-center gap-3">
+                                    <span>Learn more:</span>
+                                    <div className="flex flex-row max-w-prose overflow-x-auto custom-scrollbar gap-3 pb-2">
+                                        {msg.sources?.map((source) => (
+                                            <TooltipProvider key={source.url}>
+                                                {" "}
+                                                {/* Đảm bảo sử dụng key duy nhất cho mỗi phần tử trong mảng */}
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Button variant="outline">
+                                                            {handleSourceUrl(source.url)}
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <a
+                                                            className="text-violet-600 underline"
+                                                            href={source.url}
+                                                            target="_blank" // Mở liên kết trong tab mới
+                                                            rel="noopener noreferrer" // Bảo mật liên kết ngoài
+                                                        >
+                                                            {source.url}
+                                                        </a>
+                                                        <div>
+                                                            <p className="text-green-600 no-underline overflow-hidden text-ellipsis whitespace-nowrap">
+                                                                {source.title}
+                                                            </p>
+                                                        </div>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-                    </div>
-                ))}
-                {loading && (
-                    <div className="flex justify-center items-center">
-                        <p>Generating answer for you{dots} </p>
-                    </div>
-                )}
-                <div ref={messagesEndRef} />
-            </div>
+                            )}
+                        </div>
+                    ))}
+                    {loading && (
+                        <div className="flex justify-center items-center">
+                            <p>Generating answer for you{dots} </p>
+                        </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                </div>
+
+            )
+            }
+
+
             {/* Input Box */}
             <div className=" fixed bottom-0  w-3/4">
                 <form onSubmit={handleSubmit} className="flex justify-center">

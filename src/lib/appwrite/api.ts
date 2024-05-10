@@ -324,106 +324,22 @@ export async function deleteSavedPost(savedRecordId: string) {
 }
 
 export async function getPostById(postId: string) {
+    if (!postId) throw Error;
+
     try {
         const post = await databases.getDocument(
             appwriteConfig.databaseId,
             appwriteConfig.postCollectionId,
             postId
-        )
+        );
+
+        if (!post) throw Error;
+
         return post;
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
-
 }
-
-// export async function updatePost(post: IUpdatePost) {
-//     const hasFileToUpdate = post.file.length > 0;
-//     try {
-
-//         let image = {
-//             imageUrl: post.imageUrl,
-//             imageId: post.imageId,
-//         }
-
-//         if (hasFileToUpdate) {
-
-//             //upload image to storage
-//             const uploadedFile = await uploadFile(post.file[0]);
-//             if (!uploadedFile) throw Error;
-
-//             //get file url
-//             const fileurl = getFilePreview(uploadedFile.$id);
-
-//             if (!fileurl) {
-//                 deleteFile(uploadedFile.$id)
-//                 throw Error;
-//             }
-//             image = { ...image, imageUrl: fileurl, imageId: uploadedFile.$id }
-//         }
-
-//         //convert tag in an array
-//         const tags = post.tags?.replace(/ /g, '').split(',') || [];
-
-//         //* for search purpose
-//         //convert all uppercase to lowercase
-//         const convertedStrings = convertListStringsToLowerCase([
-
-//             post.caption,
-//             post.location, post.tags
-//         ]);
-//         //remove all vietnamese accents
-//         const removedAccents = removeVietnameseAccents([
-
-//             post.caption,
-//             post.location,
-//             post.tags
-//         ]);
-//         //remove all whitespace characters
-//         const removedWhitespace = removeWhitespace([
-
-//             post.caption,
-//             post.location,
-//             post.tags
-//         ]);
-//         //remove all accents and whitespace
-//         const removedAccentsAndWhitespace = removeAccentsAndWhitespace([
-
-//             post.caption,
-//             post.location, post.tags
-//         ]);
-//         const searchString = convertedStrings.concat(
-//             " ",
-//             removedAccents,
-//             tags.join("")
-//         );
-//         //Save to database
-
-//         const updatePost = await databases.updateDocument(
-//             appwriteConfig.databaseId,
-//             appwriteConfig.postCollectionId,
-//             post.postId,
-//             {
-
-//                 caption: post.caption,
-//                 imageUrl: image.imageUrl,
-//                 imageId: image.imageId,
-//                 location: post.location,
-//                 tags: tags,
-//                 search: searchString,
-
-//             }
-//         )
-//         if (!updatePost) {
-//             await deleteFile(post.imageId)
-//             throw Error;
-//         }
-
-//         return updatePost;
-//     } catch (error) {
-//         console.log(error)
-//     }
-// }
 
 export async function updatePost(post: IUpdatePost) {
     const hasFileToUpdate = post.file.length > 0;
