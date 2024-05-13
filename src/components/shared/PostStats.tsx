@@ -5,6 +5,7 @@ import { Models } from "appwrite"
 
 import { useState, useEffect } from "react";
 import Loader from "./Loader";
+import { Link, useLocation } from "react-router-dom";
 
 type PostStatsProps = {
     post?: Models.Document;
@@ -21,6 +22,8 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 
     const { data: currentUser } = useGetRecentUser();
     const savedPostRecord = currentUser?.save.find((record: Models.Document) => record.post.$id === post?.$id);
+    const location = useLocation();
+    const isPostsRoute = location.pathname.startsWith("/post/");
 
     useEffect(() => {
         setIsSaved(!!savedPostRecord)
@@ -68,6 +71,19 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 
                 />
                 <p className="smal-medium lg:base-medium ">{likes.length}</p>
+                {isPostsRoute ? null : (
+                    <Link to={`/posts/${post?.$id}`}>
+                        <img
+                            src="/assets/icons/chat.svg"
+                            alt="like"
+                            width={20}
+                            height={20}
+                            className="cursor-pointer ml-3"
+                        />
+                    </Link>
+                )}
+
+
             </div>
 
             <div className=" flex gap-2 ">

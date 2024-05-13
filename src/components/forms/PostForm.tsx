@@ -21,7 +21,7 @@ import { useCreatePost, useUpdatePost } from "@/lib/react-query/queriesAndMutati
 import { useUserContext } from "@/context/AuthContext"
 import { useToast } from "../ui/use-toast"
 import { useNavigate } from "react-router-dom"
-
+import axios from "axios"
 
 
 type PostFormProps = {
@@ -51,7 +51,35 @@ const PostForm = ({ post, action }: PostFormProps) => {
     })
 
     // 2. Define a submit handler.
+
     async function onSubmit(values: z.infer<typeof PostValidation>) {
+
+        //check content post
+        const response = await axios.post(
+            "https://dotenv-api-lilac.vercel.app/api/check-caption",
+            {
+                caption: form.getValues().caption,
+            }
+        );
+
+        // Check if the caption is valid
+        if (!response.data.validCaption) {
+            console.log(
+                `Contains invalid words: ${response.data.invalidWords.join(", ")}`
+            );
+            return toast({
+                title: "Invalid caption",
+                description: `Contains invalid words: 
+                ${response.data.invalidWords
+                        //@ts-expect-error tam thoi bo qua loi nay    
+                        .map((word) => word[1].join(", "))
+                        .join(", ")}`,
+
+
+            });
+        }
+
+
         if (post && action === 'Update') {
             const updatedPost = await updatePost({
                 ...values,
@@ -152,8 +180,6 @@ const PostForm = ({ post, action }: PostFormProps) => {
                         {isLoadingCreate || isLoadingUpdate && 'Loading...'}
                         {action} Post
                     </Button>
-
-
                 </div>
             </form>
         </Form>
