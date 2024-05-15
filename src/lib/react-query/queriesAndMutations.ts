@@ -7,7 +7,7 @@ import {
     useQueryClient,
     // useInfiniteQuery
 } from '@tanstack/react-query';
-import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPost, getUserById, getUserPosts, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api';
+import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPost, getUserById, getUserPosts, getUsers, joinEvent, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api';
 import { QUERY_KEYS } from './queryKeys';
 
 
@@ -222,6 +222,33 @@ export const useUpdateUser = () => {
             });
             queryClient.invalidateQueries({
                 queryKey: [QUERY_KEYS.GET_USER_BY_ID, data?.$id],
+            });
+        },
+    });
+};
+
+export const useJoinEvent = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({
+            postId,
+            joinedArray,
+        }: {
+            postId: string;
+            joinedArray: string[];
+        }) => joinEvent(postId, joinedArray),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.$id],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_RECENT_POSTS],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_POSTS],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_CURRENT_USER],
             });
         },
     });

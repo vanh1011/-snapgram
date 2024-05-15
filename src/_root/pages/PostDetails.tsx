@@ -3,17 +3,8 @@ import Loader from "@/components/shared/Loader";
 import PostCaption from "@/components/shared/PostCaption";
 import PostStats from "@/components/shared/PostStats";
 import { GridPostsSkeleton, PostDetailsSkeleton } from "@/components/skeletons";
-// import {
-//     AlertDialog,
-//     AlertDialogAction,
-//     AlertDialogCancel,
-//     AlertDialogContent,
-//     AlertDialogDescription,
-//     AlertDialogFooter,
-//     AlertDialogHeader,
-//     AlertDialogTitle,
-//     AlertDialogTrigger
-// } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -225,6 +216,9 @@ const PostDetails = () => {
                                     </div>
                                 </div>
                             </Link>
+
+                            {/* edit and delete here */}
+
                             <div className="flex-center gap-3">
                                 <Link to={`/update-post/${post?.$id}`}
                                     className={`${user.id !== post?.creator.$id && 'hidden'}`}>
@@ -234,11 +228,11 @@ const PostDetails = () => {
                                         alt="edit"
                                     />
                                 </Link>
-                                {/* <AlertDialog>
+                                <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button
-                                            variant="ghost"
-                                            className={`ghost_details-delete_btn ${user.id !== post?.creators.$id && "hidden"
+                                            // variant="ghost"
+                                            className={`ghost_details-delete_btn ${user.id !== post?.creator.$id && "hidden"
                                                 }`}>
                                             <img
                                                 src="/assets/icons/delete.svg"
@@ -264,19 +258,8 @@ const PostDetails = () => {
                                             </AlertDialogAction>
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
-                                </AlertDialog> */}
-                                <button
-                                    onClick={handleDeletePost}
-                                    // variant="ghost"
-                                    className={`ghost_details-delete_btn ${user.id !== post?.creator.$id && 'hidden'} `}
-                                >
-                                    <img
-                                        src="/assets/icons/delete.svg"
-                                        alt="delete"
-                                        width={24}
-                                        height={24}
-                                    />
-                                </button>
+                                </AlertDialog>
+
                             </div>
                         </div>
                         <hr className="border w-full border-dark-4/80" />

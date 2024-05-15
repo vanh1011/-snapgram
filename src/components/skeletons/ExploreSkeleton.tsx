@@ -13,7 +13,7 @@ const ExploreSkeleton = () => {
                 <Skeleton w-20 h-15 bg-zinc-600 />
             </div>
             <div>
-                <GridPostsSkeleton />;
+                <GridPostsSkeleton />
             </div>
 
         </div>

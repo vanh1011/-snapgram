@@ -2,7 +2,8 @@ import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
 import { ID } from "appwrite";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 import { Query } from "appwrite";
-import { convertListStringsToLowerCase, convertToLowerCase, removeAccentsAndWhitespace, removeVietnameseAccents, removeWhitespace } from "../utils";
+import { convertListStringsToLowerCase, convertToLowerCase, removeVietnameseAccents } from "../utils";
+import { title } from "process";
 
 
 
@@ -77,82 +78,6 @@ export async function signOutAccount() {
     }
 }
 
-// export async function createPost(post: INewPost) {
-//     try {
-//         //upload image to storage
-//         const uploadedFile = await uploadFile(post.file[0]);
-//         if (!uploadedFile) throw Error;
-
-//         //get file url
-//         const fileurl = getFilePreview(uploadedFile.$id);
-
-//         if (!fileurl) {
-//             deleteFile(uploadedFile.$id)
-//             throw Error;
-
-//         }
-//         //convert tag in an array
-//         const tags = post.tags?.replace(/ /g, '').split(',') || [];
-
-//         //* for search purpose
-//         //convert all uppercase to lowercase
-//         const convertedStrings = convertListStringsToLowerCase([
-
-//             post.caption,
-//             post.location, post.tags
-//         ]);
-//         //remove all vietnamese accents
-//         const removedAccents = removeVietnameseAccents([
-
-//             post.caption,
-//             post.location, post.tags
-//         ]);
-//         //remove all whitespace characters
-//         const removedWhitespace = removeWhitespace([
-
-//             post.caption,
-//             post.location, post.tags
-//         ]);
-//         //remove all accents and whitespace
-//         const removedAccentsAndWhitespace = removeAccentsAndWhitespace([
-
-//             post.caption,
-//             post.location, post.tags
-//         ]);
-//         const searchString = convertedStrings.concat(
-//             " ",
-//             removedAccents,
-//             tags.join("")
-//         );
-
-
-//         //Save to database
-
-//         const newPost = await databases.createDocument(
-//             appwriteConfig.databaseId,
-//             appwriteConfig.postCollectionId,
-//             ID.unique(),
-//             {
-//                 creator: post.userId,
-//                 caption: post.caption,
-//                 imageUrl: fileurl,
-//                 imageId: uploadedFile.$id,
-//                 location: post.location,
-//                 tags: tags,
-//                 search: searchString,
-//             }
-//         )
-//         if (!newPost) {
-//             await deleteFile(uploadedFile.$id)
-//             throw Error;
-//         }
-
-//         return newPost;
-//     } catch (error) {
-//         console.log(error)
-//     }
-// }
-
 export async function createPost(post: INewPost) {
     try {
         //Upload image to storage
@@ -173,13 +98,13 @@ export async function createPost(post: INewPost) {
         //* for search purpose
         //convert all uppercase to lowercase
         const convertedStrings = convertListStringsToLowerCase([
-
+            post.title,
             post.caption,
             post.location,
         ]);
         //remove all vietnamese accents
         const removedAccents = removeVietnameseAccents([
-
+            post.title,
             post.caption,
             post.location,
         ]);
@@ -197,6 +122,7 @@ export async function createPost(post: INewPost) {
             ID.unique(),
             {
                 creator: post.userId,
+                title: post.title,
                 caption: post.caption,
                 imageUrl: fileUrl,
                 imageId: uploadedFile.$id,
@@ -368,11 +294,13 @@ export async function updatePost(post: IUpdatePost) {
         //* for search purpose
         //convert all uppercase to lowercase
         const convertedStrings = convertListStringsToLowerCase([
+            post.title,
             post.caption,
             post.location,
         ]);
         //remove all vietnamese accents
         const removedAccents = removeVietnameseAccents([
+            post.title,
             post.caption,
             post.location,
         ]);
@@ -387,6 +315,7 @@ export async function updatePost(post: IUpdatePost) {
             appwriteConfig.postCollectionId,
             post.postId,
             {
+                post: post.title,
                 caption: post.caption,
                 imageUrl: image.imageUrl,
                 imageId: image.imageId,
@@ -602,6 +531,25 @@ export async function updateUser(user: IUpdateUser) {
         }
 
         return updatedUser;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function joinEvent(postId: string, joinedArray: string[]) {
+    try {
+        const updatedPost = await databases.updateDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.postCollectionId,
+            postId,
+            {
+                participants: joinedArray,
+            }
+        );
+
+        if (!updatedPost) throw Error;
+
+        return updatedPost;
     } catch (error) {
         console.log(error);
     }

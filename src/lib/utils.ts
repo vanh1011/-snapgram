@@ -56,6 +56,12 @@ export const checkIsLiked = (likeList: string[], userId: string) => {
   return likeList.includes(userId);
 };
 
+export const checkIsParticipated = (
+  participantList: string[],
+  userId: string
+) => {
+  return participantList.includes(userId);
+};
 
 export const convertListStringsToLowerCase = (inputArray: (string | undefined)[]): string => {
   const processedStrings: string[] = [];

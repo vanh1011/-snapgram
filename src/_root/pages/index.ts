@@ -10,3 +10,5 @@ export { default as AllUsers } from './AllUsers';
 export { default as LikedPosts } from './LikedPosts';
 export { default as ChatBot } from "./ChatBot";
 export { default as NotFound } from "./NotFound";
+export { default as ChatHome } from "./ChatHome";
+export { default as ChatSection } from "./ChatSection";

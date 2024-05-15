@@ -4,11 +4,13 @@ import { Route, Routes } from 'react-router-dom';
 import './globals.css';
 import SigninForm from './_auth/forms/SigninForm';
 import SignupForm from './_auth/forms/SignupForm';
-import { AllUsers, CreatePost, EditPost, Explore, Home, PostDetails, Profile, Saved, UpdateProfile, ChatBot, NotFound } from './_root/pages/';
+import { ChatHome, ChatSection, AllUsers, CreatePost, EditPost, Explore, Home, PostDetails, Profile, Saved, UpdateProfile, ChatBot, NotFound } from './_root/pages/';
 import AuthLayout from './_auth/AuthLayout';
 import RootLayout from './_root/RootLayout';
-import { Toaster } from "@/components/ui/toaster"
-
+import { Toaster } from "@/components/ui/toaster";
+import DashBoard from './admin/contents/DashBoard';
+import ManageUser from './admin/contents/ManageUser';
+import AdminLayout from './admin/AdminLayout';
 
 const App = () => {
 
@@ -33,10 +35,15 @@ const App = () => {
                     <Route path="/profile/:id/*" element={<Profile />} />
                     <Route path="/update-profile/:id" element={<UpdateProfile />} />
                     <Route path="/chatbot" element={<ChatBot />} />
+                    <Route path="/chats" element={<ChatHome />} />
+                    <Route path="/chats/:id" element={<ChatSection />} />
+
                     {/* error 404 */}
                     <Route path="*" element={<NotFound />} />
-
-
+                </Route>
+                <Route path="/admins" element={<AdminLayout />}>
+                    <Route index element={<DashBoard />} />
+                    <Route path="manage-users" element={<ManageUser />} />
                 </Route>
             </Routes>
             <Toaster />

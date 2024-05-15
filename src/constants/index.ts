@@ -10,6 +10,11 @@ export const sidebarLinks = [
         label: "Explore",
     },
     {
+        imgURL: "/assets/icons/chat.svg",
+        route: "/chats",
+        label: "Chat",
+    },
+    {
         imgURL: "/assets/icons/people.svg",
         route: "/all-users",
         label: "People",
@@ -54,3 +59,16 @@ export const bottombarLinks = [
         label: "Create",
     },
 ];
+
+export const sidebaradminLinks = [
+    {
+        imgURL: "/assets/icons/home.svg",
+        route: "/admins",
+        label: "Dashboard"
+    },
+    {
+        imgURL: "/assets/icons/people.svg",
+        route: "/admins/manage-users",
+        label: "All User",
+    }
+]
