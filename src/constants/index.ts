@@ -64,11 +64,11 @@ export const sidebaradminLinks = [
     {
         imgURL: "/assets/icons/home.svg",
         route: "/admins",
-        label: "Dashboard"
+        label: "All posts"
     },
     {
         imgURL: "/assets/icons/people.svg",
         route: "/admins/manage-users",
-        label: "All User",
+        label: "All Users",
     }
 ]

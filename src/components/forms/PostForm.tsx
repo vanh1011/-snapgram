@@ -16,12 +16,14 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "../ui/textarea"
 import FileUploader from "../shared/FileUploader"
 import { PostValidation } from "@/lib/validation"
-import { Models } from "appwrite"
+import { AppwriteException, ID, Models } from "appwrite"
 import { useCreatePost, useUpdatePost } from "@/lib/react-query/queriesAndMutations"
 import { useUserContext } from "@/context/AuthContext"
 import { useToast } from "../ui/use-toast"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
+import { communityStore } from "@/state/communityStore"
+import { appwriteConfig, databases } from "@/lib/appwrite/config"
 
 
 type PostFormProps = {
@@ -37,6 +39,8 @@ const PostForm = ({ post, action }: PostFormProps) => {
     const { user } = useUserContext();
     const { toast } = useToast();
     const navigate = useNavigate();
+    const communityState = communityStore();
+
 
     // 1. Define your form.
 
@@ -104,14 +108,32 @@ const PostForm = ({ post, action }: PostFormProps) => {
                 title: 'Please try again'
             })
         }
-        else {
-            navigate('/');
+        console.log(newPost);
+        databases
+            .createDocument(
+                appwriteConfig.databaseId,
+                appwriteConfig.communityCollectionId,
+                ID.unique(),
+                {
+                    name: values.title,
+                    participants: [newPost?.creator.$id],
+                    post: newPost?.$id,
+                }
+            )
+            .then((res) => {
+                communityState.addCommunity(res);
+                toast({
+                    title: "Community added successfully",
+                });
+            })
+            .catch((err: AppwriteException) => {
+                toast({
+                    title: err.message,
+                });
+            });
 
-        }
+        navigate("/");
     }
-
-
-
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-9 w-full max-w-5xl">

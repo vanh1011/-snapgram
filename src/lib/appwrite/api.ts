@@ -192,7 +192,6 @@ export async function getRecentPost() {
 }
 
 export async function likePost(postId: string, likesArray: string[]) {
-
     try {
         const updatePost = await databases.updateDocument(
             appwriteConfig.databaseId,
@@ -207,7 +206,20 @@ export async function likePost(postId: string, likesArray: string[]) {
     } catch (error) {
         console.log(error)
     }
+}
 
+export async function getCommentCount(postId: string) {
+    try {
+        const response = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.commentCollectionId,
+            [Query.equal('post_id', postId)]
+        );
+        return response.total; // Trả về tổng số lượng bình luận
+    } catch (error) {
+        console.log(error);
+        throw new Error('Failed to fetch comment count');
+    }
 }
 
 export async function savePost(postId: string, userId: string) {
@@ -315,7 +327,7 @@ export async function updatePost(post: IUpdatePost) {
             appwriteConfig.postCollectionId,
             post.postId,
             {
-                post: post.title,
+                title: post.title,
                 caption: post.caption,
                 imageUrl: image.imageUrl,
                 imageId: image.imageId,
@@ -368,9 +380,6 @@ export async function getInfinitePosts({ pageParam }: { pageParam: number }) {
         console.log(error)
     }
 }
-
-
-
 export async function searchPosts(searchTerm: string) {
     try {
         const convertedSearchTerm = convertToLowerCase(searchTerm);
@@ -458,11 +467,38 @@ export async function getCurrentUser() {
 
 
 // ============================== GET USERS
-export async function getUsers(limit?: number) {
+export async function getUsers(limit?: number, offset?: number) {
     const queries: any[] = [Query.orderDesc("$createdAt")];
 
     if (limit) {
         queries.push(Query.limit(limit));
+    }
+    if (offset) {
+        queries.push(Query.offset(offset));
+    }
+
+
+    try {
+        const users = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.userCollectionId,
+            queries
+        );
+
+        if (!users) throw Error;
+
+        return users;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function getAllUsers(limit?: number, offset?: number) {
+    const queries: any[] = [Query.orderDesc("$createdAt")];
+
+    if (limit && offset) {
+        queries.push(Query.limit(limit));
+        queries.push(Query.offset(0));
     }
 
     try {
@@ -509,6 +545,7 @@ export async function updateUser(user: IUpdateUser) {
             user.userId,
             {
                 name: user.name,
+                username: user.username,
                 bio: user.bio,
                 imageUrl: image.imageUrl,
                 imageId: image.imageId,

@@ -1,6 +1,6 @@
 import Loader from '@/components/shared/Loader';
-
-import { useGetUsers } from '@/lib/react-query/queriesAndMutations';
+import * as z from "zod";
+import { useGetUserById, useGetUsers, useUpdateUser } from '@/lib/react-query/queriesAndMutations';
 
 import {
     Table,
@@ -10,15 +10,31 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+// import { ProfileValidation } from '@/lib/validation';
+// import { toast } from '@/components/ui/use-toast';
+import { useUserContext } from '@/context/AuthContext';
 
 const ManageUser = () => {
+    // const { user, setUser } = useUserContext();
 
     const {
         data: creators,
         isLoading: isUserLoading,
         isError: isErrorCreators,
-    } = useGetUsers(10);
+    } = useGetUsers(10, 0);
 
     if (isErrorCreators) {
         return (
@@ -29,12 +45,52 @@ const ManageUser = () => {
             </div>
         );
     }
+
+
+    // // Queries
+    // const { data: currentUser } = useGetUserById(id || "");
+    // const { mutateAsync: updateUser, isLoading: isLoadingUpdate } = useUpdateUser();
+
+    // if (!currentUser)
+    //     return (
+    //         <div className="flex-center w-full h-full">
+    //             <Loader />
+    //         </div>
+    //     );
+
+    // // Handler
+    // const handleUpdate = async (value: z.infer<typeof ProfileValidation>) => {
+    //     const updatedUser = await updateUser({
+    //         userId: currentUser.$id,
+    //         name: value.name,
+    //         bio: value.bio,
+    //         file: value.file,
+    //         imageUrl: currentUser.imageUrl,
+    //         imageId: currentUser.imageId,
+    //     });
+
+    //     if (!updatedUser) {
+    //         toast({
+    //             title: `Update user failed. Please try again.`,
+    //         });
+    //     }
+
+    //     setUser({
+    //         ...user,
+    //         name: updatedUser?.name,
+    //         bio: updatedUser?.bio,
+    //         imageUrl: updatedUser?.imageUrl,
+    //     });
+    //     // return navigate(`/profile/${id}`);
+    // };
+
+
     return (
 
         <div className=" w-full">
             <div>
                 <h3 className="h3-bold text-light-1">All Creators</h3>
-                <Table>
+                <Table className='w-full'>
                     {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                     <TableHeader>
                         <TableRow className='text-gray-200 uppercase bg-gray-700'>
@@ -54,24 +110,195 @@ const ManageUser = () => {
                                 creators?.documents.map((creator) => (
                                     <TableRow>
                                         <TableCell className="font-extrabold">{creator.$id}</TableCell>
-                                        <TableCell>{creator.name}</TableCell>
+                                        <TableCell className='flex-col text-center'>
+                                            <Link to={`/profile/${creator.$id}`}>
+                                                <img
+                                                    src={creator?.imageUrl || 'assets/icons/profile-placeholder.svg'}
+                                                    alt="creator"
+                                                    className="rounded-full w-8 lg:h-8 mx-auto my-[3px]"
+                                                />
+                                            </Link>
+                                            {creator.name}
+
+                                        </TableCell>
                                         <TableCell>{creator.username}</TableCell>
                                         <TableCell>{creator.email}</TableCell>
                                         <TableCell>{creator.bio}</TableCell>
-                                        <TableCell>
-                                            <Button className="bg-slate-600 mx-3 btn-secondary"
-                                                onClick={() => {
-                                                    alert('View information user')
-                                                }}
-                                            > View</Button>
+                                        <TableCell className=' flex justify-center min-w-fit'>
+                                            {/* view */}
+                                            <Dialog >
+                                                <DialogTrigger asChild className='bg-green-700 hover:bg-green-900 text-light-1 flex gap-2 mx-3'>
+                                                    <Button variant="outline">View</Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-[425px]">
+                                                    <DialogHeader>
+                                                        <DialogTitle>View profile</DialogTitle>
+                                                        {/* <DialogDescription>
+                                                            Make changes to your profile here. Click save when you're done.
+                                                        </DialogDescription> */}
+                                                    </DialogHeader>
+                                                    <div className="grid gap-4 py-4">
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="name" className="text-right">
+                                                                ID Account
+                                                            </Label>
 
-                                            <Button className="bg-slate-600  btn-warning mx-3"
-                                            // onClick={() => props.handleClickBtnUpdate(item)}
-                                            >Update</Button>
+                                                            <Input
+                                                                id="name"
+                                                                defaultValue={creator.$id}
+                                                                className="col-span-3"
+                                                                disabled
+                                                            />
+                                                        </div>
+                                                        <div className="grid grid-cols-4 items-center gap-4 justify-center ">
+                                                            <Label htmlFor="name" className="text-right">
+                                                                Name
+                                                            </Label>
+                                                            <Input
+                                                                id="name"
+                                                                defaultValue={creator.name}
+                                                                className="col-span-3"
+                                                                disabled
+                                                            />
+                                                        </div>
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="username" className="text-right">
+                                                                Username
+                                                            </Label>
+                                                            <Input
+                                                                id="username"
+                                                                defaultValue={creator.username}
+                                                                className="col-span-3"
+                                                                disabled
+                                                            />
+                                                        </div>
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="username" className="text-right">
+                                                                Email
+                                                            </Label>
+                                                            <Input
+                                                                id="username"
+                                                                defaultValue={creator.email}
+                                                                className="col-span-3"
+                                                                disabled
+                                                            />
+                                                        </div>
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="username" className="text-right">
+                                                                Bio
+                                                            </Label>
+                                                            <Input
+                                                                id="username"
+                                                                defaultValue={creator.bio}
+                                                                className="col-span-3"
+                                                                disabled
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <DialogFooter>
+                                                        <DialogClose asChild>
+                                                            <Button type="button" variant="secondary " className='bg-orange-700 hover:bg-orange-900 text-light-1 flex gap-2'>
+                                                                Close
+                                                            </Button>
+                                                        </DialogClose>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
+                                            {/* Update button  */}
+                                            {/* <Button>
+                                                <Link
+                                                    to={`/update-profile/${creator.$id}`}
+                                                    className={`h-12 bg-dark-4 px-5 text-light-1 flex-center gap-2 rounded-lg"
+                                                        }`}>
+                            
+                                                    <p className="  flex whitespace-nowrap small-medium">
+                                                        Edit Profile
+                                                    </p>
+                                                </Link>
+                                            </Button> */}
+                                            <Dialog >
+                                                <DialogTrigger asChild className="bg-sky-700 hover:bg-sky-900 text-light-1 flex gap-2 mx-3">
+                                                    <Button variant="outline">
+                                                        update
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-[425px]">
+                                                    <DialogHeader>
+                                                        <DialogTitle>Update profile</DialogTitle>
+                                                    </DialogHeader>
+                                                    <div className="grid gap-4 py-4">
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="name" className="text-right">
+                                                                ID Account
+                                                            </Label>
+                                                            <Input
+                                                                id="name"
+                                                                defaultValue={creator.$id}
+                                                                className="col-span-3"
+                                                                disabled
+                                                            />
+                                                        </div>
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="name" className="text-right">
+                                                                Name
+                                                            </Label>
+                                                            <Input
+                                                                id="name"
+                                                                defaultValue={creator.name}
+                                                                className="col-span-3 bg-slate-600"
 
-                                            <Button className="bg-slate-600 btn-danger mx-3"
+                                                            />
+                                                        </div>
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="username" className="text-right">
+                                                                Username
+                                                            </Label>
+                                                            <Input
+                                                                id="username"
+                                                                defaultValue={creator.username}
+                                                                className="col-span-3 bg-slate-600"
+
+                                                            />
+                                                        </div>
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="username" className="text-right">
+                                                                Email
+                                                            </Label>
+                                                            <Input
+                                                                id="username"
+                                                                defaultValue={creator.email}
+                                                                className="col-span-3"
+                                                                disabled
+                                                            />
+                                                        </div>
+                                                        <div className="grid grid-cols-4 items-center gap-4">
+                                                            <Label htmlFor="username" className="text-right">
+                                                                Bio
+                                                            </Label>
+                                                            <Input
+                                                                id="username"
+                                                                defaultValue={creator.bio}
+                                                                className="col-span-3 bg-slate-600"
+
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <DialogFooter>
+                                                        <DialogClose asChild>
+
+                                                            <Button type="submit" className='bg-orange-700 hover:bg-orange-900 text-light-1 flex gap-2'>
+                                                                Save changes
+                                                            </Button>
+                                                        </DialogClose>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
+
+                                            <Button className=" bg-orange-700 hover:bg-orange-900 text-light-1 flex gap-2 mx-3 "
                                             // onClick={() => props.handleClickBtnDelete(item)}
-                                            >Delete</Button>
+                                            >Delete
+                                            </Button>
+
                                         </TableCell>
                                     </TableRow>
                                 ))

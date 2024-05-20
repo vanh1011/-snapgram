@@ -7,9 +7,8 @@ import {
     useQueryClient,
     // useInfiniteQuery
 } from '@tanstack/react-query';
-import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPost, getUserById, getUserPosts, getUsers, joinEvent, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api';
+import { createPost, createUserAccount, deletePost, deleteSavedPost, getCommentCount, getCurrentUser, getInfinitePosts, getPostById, getRecentPost, getUserById, getUserPosts, getUsers, joinEvent, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api';
 import { QUERY_KEYS } from './queryKeys';
-
 
 
 export const useCreateUserAccount = () => {
@@ -77,6 +76,13 @@ export const useLikePost = () => {
     })
 }
 
+
+export const useGetCommentCount = (postId: string) => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_COMMENT_COUNT, postId],
+        queryFn: () => getCommentCount(postId),
+    });
+};
 export const useSavePost = () => {
     const queryClient = useQueryClient();
 
@@ -205,10 +211,10 @@ export const useGetCurrentUser = () => {
     });
 };
 
-export const useGetUsers = (limit?: number) => {
+export const useGetUsers = (limit?: number, offset?: number) => {
     return useQuery({
         queryKey: [QUERY_KEYS.GET_USERS],
-        queryFn: () => getUsers(limit),
+        queryFn: () => getUsers(limit, offset),
     });
 };
 

@@ -162,7 +162,7 @@ const ChatBot = () => {
                             width={190}
                             height={395}
                         />
-                        <h2 className="my-10 text-2xl font-medium">How can I help you today?</h2>
+                        <h1 className="my-10 text-2xl font-medium">How can I help you today ?</h1>
                         {/* <p className="text-light-3 small-medium md:base-regular mt-2">ask me some any things</p> */}
 
                     </div>

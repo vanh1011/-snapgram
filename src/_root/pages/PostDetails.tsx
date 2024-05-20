@@ -34,7 +34,6 @@ const PostDetails = () => {
     );
     //varible cho func expand caption
     const [expanded, setExpanded] = useState(false);
-
     const commentState = commentStore();
     const { toast } = useToast();
     const isFetched = useRef(false);
@@ -265,6 +264,7 @@ const PostDetails = () => {
                         <hr className="border w-full border-dark-4/80" />
                         <div className="flex flex-col flex-1 w-full small-medium lg:base-regular">
                             {/* <p>{post?.caption}</p> */}
+                            <p className="font-extrabold leading-10">{post?.title}</p>
                             {renderCaption()}
                             <ul className="flex gap-1 mt-2">
                                 {post?.tags.map((tag: string) => (

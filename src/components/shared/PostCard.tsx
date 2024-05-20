@@ -3,12 +3,16 @@ import { multiFormatDateString } from "@/lib/utils";
 import { Models } from "appwrite"
 import { Link } from "react-router-dom";
 import PostStats from "./PostStats";
+import PostCaption from "./PostCaption";
+
 
 type PostCardProps = {
     post: Models.Document;
 }
 
 const PostCard = ({ post }: PostCardProps) => {
+
+
     const { user } = useUserContext();
     if (!post.creator) return;
 
@@ -53,7 +57,8 @@ const PostCard = ({ post }: PostCardProps) => {
             </div>
             <Link to={`posts/${post.$id}`}>
                 <div className="small-medium lg:base-medium py-5">
-                    <p>{post.caption}</p>
+                    <p className="font-extrabold leading-10">{post.title}</p>
+                    <PostCaption paragraph={post.caption} />
                     <ul className="flex gap-1 mt-2">
                         {post.tags.map((tag: string) => (
                             <li key={tag} className="text-light-3">

@@ -4,9 +4,9 @@ import { Outlet } from "react-router-dom"
 
 const AdminLayout = () => {
     return (
-        <div className="flex">
+        <div className="w-full flex">
             <SideBar />
-            <section className=' flex justify-center w-full'>
+            <section className=' flex flex-1 h-full'>
                 <Outlet />
             </section>
 

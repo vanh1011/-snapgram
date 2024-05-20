@@ -195,7 +195,9 @@
 /* eslint-disable */
 import {
     useDeleteSavePost,
+    useGetCommentCount,
     useGetCurrentUser,
+    useGetPostById,
     useJoinEvent,
     useLikePost,
     useSavePost,
@@ -204,36 +206,49 @@ import { checkIsLiked, checkIsParticipated } from "@/lib/utils";
 import { AppwriteException, Models, Query } from "appwrite";
 import React, { useEffect, useState } from "react";
 import Loader from "./Loader";
-import { Button } from "../ui/button";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+// import { Button } from "../ui/button";
+// import {
+//     AlertDialog,
+//     AlertDialogAction,
+//     AlertDialogCancel,
+//     AlertDialogContent,
+//     AlertDialogDescription,
+//     AlertDialogFooter,
+//     AlertDialogHeader,
+//     AlertDialogTitle,
+//     AlertDialogTrigger,
+// } from "@/components/ui/alert-dialog";
 import { appwriteConfig, databases } from "@/lib/appwrite/config";
-import { useToast } from "../ui/use-toast";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { toast, useToast } from "../ui/use-toast";
+import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
+import { commentStore } from "@/state/commentsState";
 
 type PostStatsProps = {
     post?: Models.Document;
     userId: string;
 };
+// const { id } = useParams();
+
 
 const PostStats = ({ post, userId }: PostStatsProps) => {
     const likesList = post?.likes.map((user: Models.Document) => user.$id);
+    // const commentList = post?.commentState.map((user: Models.Document) => user.$id);
+    // const [loading, setLoading] = useState(false);
+
+
+
+
+    const commentState = commentStore();
+
     // const participantsList = post?.participants.map(
     //     (user: Models.Document) => user.$id
     // );
     const [likes, setLikes] = useState(likesList);
+
     // const [joins, setJoins] = useState(participantsList);
     const [isSaved, setIsSaved] = useState(false);
 
+    const { data: commentcount, isLoading } = useGetCommentCount(post?.$id || "");
     const { mutate: likePost } = useLikePost();
     // const { mutate: joinEvent } = useJoinEvent();
     const { mutate: savePost, isPending: isSavingPost } = useSavePost();
@@ -242,13 +257,14 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
     // const { toast } = useToast();
     // const navigate = useNavigate();
     const location = useLocation();
-    const isPostsRoute = location.pathname.startsWith("/post/");
+    const isPostsRoute = location.pathname.startsWith("/posts/");
 
     const { data: currentUser } = useGetCurrentUser();
 
     const savedPostRecord = currentUser?.save.find(
         (record: Models.Document) => record.post.$id === post?.$id
     );
+
 
     useEffect(() => {
         setIsSaved(!!savedPostRecord); //automatic boolean assignment
@@ -268,6 +284,9 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
         setLikes(newLikes);
         likePost({ postId: post?.$id || "", likesArray: newLikes });
     };
+
+
+
     const handleSavePost = (e: React.MouseEvent) => {
         e.stopPropagation();
 
@@ -327,7 +346,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 
     return (
         <div className="flex justify-between items-center z-20">
-            <div className="flex gap-2 mr-5">
+            <div className="flex gap-2">
                 <img
                     src={
                         checkIsLiked(likes, userId)
@@ -343,16 +362,19 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 
                 <p className="small-medium lg:base-medium">{likes.length}</p>
                 {isPostsRoute ? null : (
-                    <Link to={`/posts/${post?.$id}`}>
+                    <Link to={`/posts/${post?.$id}`} className="flex gap-2">
 
                         <img
                             src="/assets/icons/chat.svg"
                             alt="like"
                             width={20}
                             height={20}
-                            className="cursor-pointer ml-3"
+                            className="cursor-pointer ml-1"
                         />
+                        <p className="small-medium lg:base-medium">{isLoading ? <Loader /> : (commentcount)}</p>
+
                     </Link>
+
                 )}
             </div>
 

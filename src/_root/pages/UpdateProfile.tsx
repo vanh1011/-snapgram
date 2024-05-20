@@ -54,6 +54,7 @@ const UpdateProfile = () => {
         const updatedUser = await updateUser({
             userId: currentUser.$id,
             name: value.name,
+            username: value.username,
             bio: value.bio,
             file: value.file,
             imageUrl: currentUser.imageUrl,
@@ -69,6 +70,7 @@ const UpdateProfile = () => {
         setUser({
             ...user,
             name: updatedUser?.name,
+            username: updatedUser?.username,
             bio: updatedUser?.bio,
             imageUrl: updatedUser?.imageUrl,
         });
@@ -134,7 +136,7 @@ const UpdateProfile = () => {
                                             type="text"
                                             className="shad-input"
                                             {...field}
-                                            disabled
+                                        // disabled
                                         />
                                     </FormControl>
                                     <FormMessage />
